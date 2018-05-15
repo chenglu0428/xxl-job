@@ -8,6 +8,12 @@
 	</parent>
 	<artifactId>xxl-job-admin</artifactId>
 	<packaging>war</packaging>
+	
+	<properties>
+		<xxl-job-core.version>1.9.2-SNAPSHOT</xxl-job-core.version>
+		<jdk.version>1.7</jdk.version>
+		<tomcat.version>2.1</tomcat.version>
+	</properties>
 
 	<dependencies>
 		<!-- springframe start -->
@@ -135,12 +141,138 @@
 		</dependency>
 
 		<!-- xxl-job-core -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.xuxueli</groupId>
 			<artifactId>xxl-job-core</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency> -->
+		
+		<dependency>
+			<groupId>com.xuxueli</groupId>
+			<artifactId>xxl-job-core</artifactId>
+			<version>${xxl-job-core.version}</version>
 		</dependency>
 
 	</dependencies>
+	
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<profiles.active>dev</profiles.active>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>uat</id>
+			<properties>
+				<profiles.active>uat</profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<profiles.active>prod</profiles.active>
+			</properties>
+		</profile>
+	</profiles>
+	
+	<build>
+		<outputDirectory>${project.basedir}/src/main/webapp/WEB-INF/classes/</outputDirectory>
+		<filters>
+			<filter>src/main/resources/profile/xxl-job-admin-${profiles.active}.properties</filter>
+		</filters>
+		<resources>
+			<resource>
+				<directory>src/main/resources/</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<!-- Compiler 插件, 设定JDK版本 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>${jdk.version}</source><!-- 开发环境JDK版本 -->
+					<target>${jdk.version}</target><!-- 编译环境JDK版本 -->
+					<showWarnings>true</showWarnings>
+				</configuration>
+			</plugin>
+		
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+					<warName>${project.artifactId}</warName>
+					<webResources>
+	                    <resource>
+	                        <directory>${project.basedir}\</directory>
+	                        <targetPath>WEB-INF/lib</targetPath>
+	                        <filtering>true</filtering>
+	                        <includes>
+	                            <include>xxl-job-core-${xxl-job-core.version}.jar</include>
+	                        </includes>
+	                    </resource>
+	                </webResources>
+				</configuration>
+            </plugin>
+            
+			<!-- resource插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+			</plugin>
+
+			<!-- tomcat7插件 -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>${tomcat.version}</version>
+				<configuration>
+					<url>http://172.19.67.170:8080/manager/text</url>
+					<port>${webserver.port}</port>
+					<username>tomcat</username>
+					<password>tomcat</password>
+					<path>/${project.artifactId}</path>
+					<warFile>${project.build.directory}/${project.artifactId}.war</warFile>
+				</configuration>
+			</plugin>
+
+			<!-- install插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+
+			<!-- clean插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
+
+			<!-- ant插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+			</plugin>
+
+			<!-- dependency插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.5.1</version>
+			</plugin>
+
+		</plugins>
+	</build>
 
 </project>

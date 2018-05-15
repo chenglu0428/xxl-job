@@ -12,6 +12,10 @@
 	<name>${project.artifactId}</name>
 	<description>A lightweight distributed task scheduling framework.</description>
 	<url>http://www.xuxueli.com/</url>
+	
+	<properties>
+		<jdk.version>1.7</jdk.version>
+	</properties>
 
 	<dependencies>
 		<!-- servlet -->
@@ -83,5 +87,88 @@
 		</dependency>
 
 	</dependencies>
+	
+	<build>
+		<!-- <finalName>xxl-job-core</finalName> -->
+		<plugins>
+			<!-- Compiler 插件, 设定JDK版本 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.7</source><!-- 开发环境JDK版本 -->
+					<target>1.7</target><!-- 编译环境JDK版本 -->
+					<showWarnings>true</showWarnings>
+				</configuration>
+			</plugin>
+		
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+					<warName>${project.artifactId}</warName>
+				</configuration>
+            </plugin>
+            
+			<!-- resource插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+			</plugin>
+
+			<!-- tomcat7插件 -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<url>http://172.19.67.170:8080/manager/text</url>
+					<port>${webserver.port}</port>
+					<username>tomcat</username>
+					<password>tomcat</password>
+					<path>/${project.artifactId}</path>
+					<warFile>${project.build.directory}/${project.artifactId}.jar</warFile>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				  <groupId>org.eclipse.jetty</groupId>
+				  <artifactId>jetty-maven-plugin</artifactId>
+				  <version>9.4.11-SNAPSHOT</version>
+				</plugin>
+
+			<!-- install插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+
+			<!-- clean插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
+
+			<!-- ant插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+			</plugin>
+
+			<!-- dependency插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.5.1</version>
+			</plugin>
+
+		</plugins>
+	</build>
 
 </project>
